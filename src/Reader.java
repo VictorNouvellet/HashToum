@@ -24,9 +24,10 @@ public class Reader {
 	}
 		
 //------------------------------------------------- METHODS
-	public void paint(String fileToRead, String FileToWrite) {
+	public void paint(String fileToRead, String FileToWrite, String FileToCheck) {
 		read(fileToRead);
 		writeCommands(FileToWrite);
+		checkPainting(FileToCheck);
 	}
 	
 	
@@ -160,7 +161,7 @@ public class Reader {
 	{
 		try {
 
-			String content = null;
+			String content = "";
 
 			File file = new File(fileName);
 
@@ -172,10 +173,6 @@ public class Reader {
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
 			
-			// INIT : NUMBER OF LINES
-			content = xFirstPos.size()+"\n";
-			bw.write(content);
-			
 			int xi = 0;
 			
 			// WRITE COMMANDS IN THE FILE
@@ -183,19 +180,18 @@ public class Reader {
 			{
 				for(xi=0; xi<80; xi++)
 				{
-					if ()
+					if (isPartOf(xi,yi))
 					{
-						
+						content+="#";
 					}
 					else
 					{
-						
+						content+=".";
 					}
-					content+=".";
 				}
-				content = "PAINT_LINE "+yFirstPos.get(i)+" "++" "+ySecondPos.get(i)+" "+xSecondPos.get(i)+"\n";
-				bw.write(content);
+				content+="\n";
 			}
+			bw.write(content);
 			
 			bw.close();
 
