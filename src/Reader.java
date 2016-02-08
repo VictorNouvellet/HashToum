@@ -3,10 +3,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Stack;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+
 
 public class Reader {
 //------------------------------------------------- ATTRIBUTES	
-
+	// REGISTER X,Y POSITIONS
+	protected int[] xFirstPos = new int [14*80];
+	protected int[] yFirstPos = new int [14*80];
+	protected int[] xSecondPos = new int [14*80];
+	protected int[] ySecondPos = new int [14*80];
+	protected int nbLines = 0;
 
 //------------------------------------------------- CONSTRUCTORS
 	public Reader()
@@ -16,26 +25,19 @@ public class Reader {
 		
 //------------------------------------------------- METHODS
 
-	public static void main(String[] args) {
-
+	public void paint(String file) {
 		BufferedReader br = null;
 		char c;
 		boolean continuousLine = false;
 		int count = 0;
 		int rowNumber = 0;
-		
-		// REGISTER X,Y POSITIONS
-		int[] xFirstPos = new int [14*80];
-		int[] yFirstPos = new int [14*80];
-		int[] xSecondPos = new int [14*80];
-		int[] ySecondPos = new int [14*80];
-		int nbLines = 0;
+
 		
 		try {
 
 			String sCurrentLine;
 
-			br = new BufferedReader(new FileReader("logo.in"));
+			br = new BufferedReader(new FileReader(file));
 			
 			// FOR EACH LINE
 			while ((sCurrentLine = br.readLine()) != null) {
@@ -87,5 +89,33 @@ public class Reader {
 			}
 		}
 
+	}
+	
+	
+	public void writeCommands(String fileName)
+	{
+		try {
+
+			String content = "This is the content to write into file";
+
+			File file = new File(fileName);
+
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(content);
+			bw.close();
+
+			System.out.println("Done");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			
+		
 	}
 }
