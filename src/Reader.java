@@ -1,8 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Stack;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -10,12 +10,12 @@ import java.io.FileWriter;
 
 public class Reader {
 //------------------------------------------------- ATTRIBUTES	
+	
 	// REGISTER X,Y POSITIONS
-	protected int[] xFirstPos = new int [14*80];
-	protected int[] yFirstPos = new int [14*80];
-	protected int[] xSecondPos = new int [14*80];
-	protected int[] ySecondPos = new int [14*80];
-	protected int nbLines = 0;
+	protected ArrayList<Integer> xFirstPos = new ArrayList<Integer>();
+	protected ArrayList<Integer> yFirstPos = new ArrayList<Integer>();
+	protected ArrayList<Integer> xSecondPos = new ArrayList<Integer>();
+	protected ArrayList<Integer> ySecondPos = new ArrayList<Integer>();
 
 //------------------------------------------------- CONSTRUCTORS
 	public Reader()
@@ -24,8 +24,18 @@ public class Reader {
 	}
 		
 //------------------------------------------------- METHODS
-
-	public void paint(String file) {
+	public void paint(String fileToRead, String FileToWrite) {
+		read(fileToRead);
+		writeCommands(FileToWrite);
+	}
+	
+	
+/**
+ * Reads the input file and registers all the 
+ * start & end points of horizontal lines of #
+ * @param file
+ */
+	public void read(String file) {
 		BufferedReader br = null;
 		char c;
 		boolean continuousLine = false;
@@ -43,31 +53,44 @@ public class Reader {
 			while ((sCurrentLine = br.readLine()) != null) {
 				
 				// FOR EACH CHARACTER
-				for(int i=0; i<sCurrentLine.length()-1; i++)
+				for(int i=0; i<sCurrentLine.length(); i++)
 				{
 					c = sCurrentLine.charAt(i);
-					System.out.print(c);
 					
 					if (c == '#')
 					{
+						// START OR RESUME LENGTH COUNT
 						continuousLine = true;
 						count++;
 					}
-					else
+					else 
 					{
 						if (continuousLine)
 						{
 							// END OF CONTINUOUS LINE, MUST REGISTER IT
-							xFirstPos[nbLines] = i-count; //R1
-							yFirstPos[nbLines] = rowNumber-1; //C1
+							xFirstPos.add(i-count); //R1
+							yFirstPos.add(rowNumber-1); //C1
 							
-							xSecondPos[nbLines] = i-1; //R2
-							ySecondPos[nbLines] = rowNumber-1; //C2
-							System.out.print(xFirstPos[nbLines]+" ");
-							System.out.print(yFirstPos[nbLines]+" ");
-							System.out.print(xSecondPos[nbLines]+" ");
-							System.out.print(ySecondPos[nbLines]+" ");
-							nbLines++;
+							xSecondPos.add(i-1); //R2
+							ySecondPos.add(rowNumber-1); //C2
+							
+							// RESTART COUNT
+							continuousLine = false;
+							count = 0;
+						}
+					}
+					
+					// END OF LINE, CHECK IF NEED TO BE REGISTERED
+					if (i==sCurrentLine.length()-1)
+					{
+						if (continuousLine)
+						{
+							// END OF CONTINUOUS LINE, MUST REGISTER IT
+							xFirstPos.add(i-count); //C1
+							yFirstPos.add(rowNumber-1); //R1
+							
+							xSecondPos.add(i-1); //C2
+							ySecondPos.add(rowNumber-1); //R2
 							
 							// RESTART COUNT
 							continuousLine = false;
@@ -75,7 +98,7 @@ public class Reader {
 						}
 					}
 				}
-				System.out.println();
+				// COUNT FOR R1=R2 (=rowNumber)
 				rowNumber++;
 			}
 
@@ -96,7 +119,7 @@ public class Reader {
 	{
 		try {
 
-			String content = "This is the content to write into file";
+			String content = null;
 
 			File file = new File(fileName);
 
@@ -107,7 +130,18 @@ public class Reader {
 
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
+			
+			// INIT : NUMBER OF LINES
+			content = xFirstPos.size()+"\n";
 			bw.write(content);
+			
+			// WRITE COMMANDS IN THE FILE
+			for(int i=0; i<xFirstPos.size(); i++)
+			{
+				content = "PAINT_LINE "+xFirstPos.get(i)+" "+yFirstPos.get(i)+" "+xSecondPos.get(i)+" "+ySecondPos.get(i)+"\n";
+				bw.write(content);
+			}
+			
 			bw.close();
 
 			System.out.println("Done");
