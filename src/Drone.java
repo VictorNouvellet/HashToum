@@ -44,4 +44,19 @@ public class Drone {
 
         return weight;
     }
+    
+    public boolean isEmpty(){
+    	if (inventory.isEmpty())
+    	{
+    		return true;
+    	}
+    	
+    	for (int i=0; i<inventory.size(); i++){
+    		if (inventory.get(i)!=0)
+    		{
+    			return false;
+    		}
+    	}
+    	return true;
+    }
 }
