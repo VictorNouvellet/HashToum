@@ -12,7 +12,7 @@ public class Reader {
 
 			String sCurrentLine;
 
-			br = new BufferedReader(new FileReader("/Users/victor/Downloads/test.txt"));
+			br = new BufferedReader(new FileReader("/Users/victor/Downloads/busy_day.in"));
 
 			while ((sCurrentLine = br.readLine()) != null) {
 				System.out.println(sCurrentLine);
