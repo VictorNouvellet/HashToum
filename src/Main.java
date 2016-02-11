@@ -77,7 +77,7 @@ public class Main {
         				
         			}
         		}
-        		updateDrones();
+        		//updateDrones();
         		time++;
         	}
         	return res;
