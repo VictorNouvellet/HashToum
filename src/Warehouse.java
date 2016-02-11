@@ -15,7 +15,7 @@ public class Warehouse {
 
     }
 
-    public Warehouse(int column, int row, int numOfProduct)   {
+    public Warehouse(int row, int column, int numOfProduct)   {
         items = new ArrayList<Integer>(numOfProduct);
         this.column = column;
         this.row = row;
@@ -43,5 +43,14 @@ public class Warehouse {
 
     public boolean checkAvailable(int id, int quantity) {
         return items.get(id)-quantity>=0;
+    }
+
+    @Override
+    public String toString() {
+        return "Warehouse{" +
+                "column=" + column +
+                ", row=" + row +
+                ", items=" + items +
+                '}';
     }
 }
