@@ -17,7 +17,7 @@ public class Drone {
     public boolean loadItem(int id, int quantity, Warehouse wh)   {
         if(wh.checkAvailable(id, quantity)) {
             wh.removeItems(id, quantity);
-            inventory.add(id, quantity);
+            inventory.set(id, inventory.get(id)+quantity);
 
             return true;
         }
@@ -28,7 +28,7 @@ public class Drone {
 
     public Integer unloadItem(int id, int quantity, Warehouse wh)   {
         wh.addItems(id, quantity);
-        inventory.add(id, inventory.get(id)-quantity);
+        inventory.set(id, inventory.get(id)-quantity);
         return inventory.get(id);
     }
 
