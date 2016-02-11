@@ -16,7 +16,10 @@ public class Warehouse {
     }
 
     public Warehouse(int row, int column, int numOfProduct)   {
-        items = new ArrayList<Integer>(numOfProduct);
+        items = new ArrayList<Integer>();
+        for (int i=0; i<numOfProduct; i++)  {
+            items.add(0);
+        }
         this.column = column;
         this.row = row;
     }
@@ -30,13 +33,13 @@ public class Warehouse {
 	}
 
 	public int addItems(int id, int numberOfProducts)   {
-        this.items.add(id, numberOfProducts);
+        this.items.set(id, items.get(id) + numberOfProducts);
 
         return this.items.get(id);
     }
 
     public int removeItems(int id, int numberOfProducts)   {
-        items.add(id, items.get(id)-numberOfProducts);
+        items.set(id, items.get(id)-numberOfProducts);
 
         return this.items.get(id);
     }

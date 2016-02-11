@@ -45,4 +45,30 @@ public class Order {
                 ", items=" + items +
                 '}';
     }
+    
+	public boolean removeItems(int itemId, int quantity){
+		int somme = items.get(itemId);
+		somme -= quantity;
+		if (somme < 0)
+		{
+			return false;
+		}
+		items.set(itemId, somme);
+		return true;
+	}
+	
+	public boolean isEmpty(){
+		if (items.isEmpty())
+    	{
+    		return true;
+    	}
+    	
+    	for (int i=0; i<items.size(); i++){
+    		if (items.get(i)!=0)
+    		{
+    			return false;
+    		}
+    	}
+    	return true;
+	}
 }
