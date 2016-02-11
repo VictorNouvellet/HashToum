@@ -7,9 +7,9 @@ public class Main {
             System.out.println("initialisation");
 
             Parser.parseInput("/Users/victor/Downloads/busy_day.in");
-            Parser.displayDrones();
-            Parser.displayOrders();
-            Parser.displayWarehouses();
+            //Parser.displayDrones();
+            //Parser.displayOrders();
+            //Parser.displayWarehouses();
         }
 
 }

@@ -44,4 +44,13 @@ public class Drone {
 
         return weight;
     }
+
+    @Override
+    public String toString() {
+        return "Drone{" +
+                "inventory=" + inventory +
+                ", column=" + column +
+                ", row=" + row +
+                '}';
+    }
 }

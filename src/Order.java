@@ -13,4 +13,13 @@ public class Order {
         this.column = column;
         this.items = items;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "column=" + column +
+                ", row=" + row +
+                ", items=" + items +
+                '}';
+    }
 }

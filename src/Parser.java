@@ -93,7 +93,6 @@ public class Parser {
                 }
                 for(int i=0; i<numOrderItems; i++){
                     int itemId = Integer.parseInt(itemsString[i]);
-                    System.out.println(itemId + " " + itemId);
                     items.add(itemId, 1);
                 }
 
