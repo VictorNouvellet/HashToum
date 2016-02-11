@@ -38,6 +38,12 @@ public class Warehouse {
         return this.items.get(id);
     }
 
+    public int setItems(int id, int numberOfProducts)   {
+        this.items.set(id, numberOfProducts);
+
+        return this.items.get(id);
+    }
+
     public int removeItems(int id, int numberOfProducts)   {
         items.set(id, items.get(id)-numberOfProducts);
 

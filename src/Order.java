@@ -46,7 +46,7 @@ public class Order {
                 '}';
     }
     
-	public boolean removeItems(int itemId, int quantity){
+	public boolean removeItemsPossible(int itemId, int quantity){
 		int somme = items.get(itemId);
 		somme -= quantity;
 		if (somme < 0)

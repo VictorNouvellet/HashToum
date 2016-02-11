@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class Parser {
-    private static ArrayList<Integer> weights;
+    public static ArrayList<Integer> weights;
 
     private static ArrayList<Warehouse> warehouses;
     private static ArrayList<Order> orders;
     private static ArrayList<Drone> drones;
+
+    public static int maxPayload;
+    public static int turns;
 
 	public static void parseInput(String filename) {
 
@@ -29,8 +32,8 @@ public class Parser {
             int rows = Integer.parseInt(firstParams[0]);
             int columns = Integer.parseInt(firstParams[1]);
             int dronesNum = Integer.parseInt(firstParams[2]);
-            int turns = Integer.parseInt(firstParams[3]);
-            int maxPayload = Integer.parseInt(firstParams[4]);
+            turns = Integer.parseInt(firstParams[3]);
+            maxPayload = Integer.parseInt(firstParams[4]);
 
             sCurrentLine = br.readLine();
             //Number of product types
@@ -62,7 +65,7 @@ public class Parser {
                 sCurrentLine = br.readLine();
                 String[] itemsString = sCurrentLine.split(" ");
                 for(int i=0; i<numProdTypes; i++){
-                    wh.addItems(i,Integer.parseInt(itemsString[i]));
+                    wh.setItems(i,Integer.parseInt(itemsString[i]));
                 }
 
                 warehouses.add(whid, wh);
@@ -88,12 +91,12 @@ public class Parser {
                 sCurrentLine = br.readLine();
                 String[] itemsString = sCurrentLine.split(" ");
                 ArrayList<Integer> items = new ArrayList<Integer>();
-                for (int j = 0; j<numProdTypes; j++)    {
-                    items.add(j,0);
+                for(int i=0; i<numProdTypes; i++){
+                    items.add(i,0);
                 }
                 for(int i=0; i<numOrderItems; i++){
                     int itemId = Integer.parseInt(itemsString[i]);
-                    items.add(itemId, 1);
+                    items.set(itemId, items.get(itemId)+1);
                 }
 
                 Order order = new Order(row, column, items);

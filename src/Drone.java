@@ -52,7 +52,7 @@ public class Drone {
                 ", column=" + column +
                 ", row=" + row +
                 '}';
-
+    }
     
     public boolean isEmpty(){
     	if (inventory.isEmpty())
