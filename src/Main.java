@@ -9,20 +9,25 @@ public class Main {
         public static void main(String[] args) {
 
 			// Lecture du fichier
-            Parser.parseInput("./in/busy_day.in");
-            //Parser.parseInput("./in/mother_of_all_warehouses.in");
-            //Parser.parseInput("./in/redundancy.in");
+            perFile("./in/busy_day.in", "busy_day.out");
+            perFile("./in/mother_of_all_warehouses.in", "mother_of_all_warehouses.out");
+            perFile("./in/redundancy.in", "redundancy.out");
+        }
+
+        public static void perFile(String filenameIn, String filenameOut) {
+            // Lecture du fichier
+            Parser.parseInput(filenameIn);
 
             //Parser.displayDrones();
             //Parser.displayOrders();
             //Parser.displayWarehouses();
-        	
-        	//Construction des livraisons
+
+            //Construction des livraisons
             ArrayList<String> commands = getLivraisons();
-            try(  PrintWriter out = new PrintWriter( "busy_day.out" )  ){
+            try(  PrintWriter out = new PrintWriter(filenameOut)  ){
                 out.println(commands.size());
                 for (String command:commands
-                     ) {
+                        ) {
                     out.println( command );
                 }
 
