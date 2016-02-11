@@ -27,7 +27,7 @@ public class Parser {
             String[] firstParams = sCurrentLine.split(" ");
             int rows = Integer.parseInt(firstParams[0]);
             int columns = Integer.parseInt(firstParams[1]);
-            int drones = Integer.parseInt(firstParams[2]);
+            int dronesNum = Integer.parseInt(firstParams[2]);
             int turns = Integer.parseInt(firstParams[3]);
             int maxPayload = Integer.parseInt(firstParams[4]);
 
@@ -70,16 +70,35 @@ public class Parser {
             int numOrders = Integer.parseInt(sCurrentLine.split(" ")[0]);
 
             //Order creation
-            for (int i=0; i<numOrders; i++) {
+            for (int orderId=0; orderId<numOrders; orderId++) {
                 //Coords
+                sCurrentLine = br.readLine();
+                int row = Integer.parseInt(sCurrentLine.split(" ")[0]);
+                int column = Integer.parseInt(sCurrentLine.split(" ")[1]);
+
                 //Num Items in Order
+                sCurrentLine = br.readLine();
+                int numOrderItems = Integer.parseInt(sCurrentLine.split(" ")[0]);
+
                 //Types of Items
+                sCurrentLine = br.readLine();
+                String[] itemsString = sCurrentLine.split(" ");
+                ArrayList<Integer> items = new ArrayList<Integer>(numProdTypes);
+                for(int i=0; i<numOrderItems; i++){
+                    int itemId = Integer.parseInt(itemsString[i]);
+                    items.add(itemId, items.get(itemId)+1);
+                }
+
+                Order order = new Order(row, column, items);
             }
 
             //Init Drones
+            for (int idDrone = 0; idDrone<dronesNum; idDrone++) {
+                drones.add(new Drone());
+            }
 
 			while ((sCurrentLine = br.readLine()) != null) {
-				System.out.println(sCurrentLine);
+				System.out.println("ERROR : input line not used -> "+sCurrentLine);
 			}
 
 		} catch (IOException e) {
