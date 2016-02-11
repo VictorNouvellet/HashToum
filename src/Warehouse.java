@@ -36,4 +36,13 @@ public class Warehouse {
     public boolean checkAvailable(int id, int quantity) {
         return items.get(id)-quantity>=0;
     }
+
+    @Override
+    public String toString() {
+        return "Warehouse{" +
+                "column=" + column +
+                ", row=" + row +
+                ", items=" + items +
+                '}';
+    }
 }

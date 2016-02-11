@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class Parser {
     private static ArrayList<Integer> weights;
@@ -11,7 +12,7 @@ public class Parser {
     private static ArrayList<Order> orders;
     private static ArrayList<Drone> drones;
 
-	public static void parseInput() {
+	public static void parseInput(String filename) {
 
 		BufferedReader br = null;
 
@@ -19,7 +20,7 @@ public class Parser {
 
 			String sCurrentLine;
 
-			br = new BufferedReader(new FileReader("/Users/victor/Downloads/busy_day.in"));
+			br = new BufferedReader(new FileReader(filename));
 
 			sCurrentLine = br.readLine();
 
@@ -39,6 +40,7 @@ public class Parser {
             //product weights
 
             String[] prodWeights = sCurrentLine.split(" ");
+            weights = new ArrayList<Integer>();
             for(int i=0; i<prodWeights.length; i++){
                 weights.add(Integer.parseInt(prodWeights[i]));
             }
@@ -48,6 +50,7 @@ public class Parser {
             int numWH = Integer.parseInt(sCurrentLine.split(" ")[0]);
 
             //Warehouses creation
+            warehouses = new ArrayList<Warehouse>(numWH);
             for (int whid=0; whid< numWH; whid++)   {
                 //Create WH with coords
                 sCurrentLine = br.readLine();
@@ -70,6 +73,7 @@ public class Parser {
             int numOrders = Integer.parseInt(sCurrentLine.split(" ")[0]);
 
             //Order creation
+            orders = new ArrayList<Order>();
             for (int orderId=0; orderId<numOrders; orderId++) {
                 //Coords
                 sCurrentLine = br.readLine();
@@ -83,16 +87,23 @@ public class Parser {
                 //Types of Items
                 sCurrentLine = br.readLine();
                 String[] itemsString = sCurrentLine.split(" ");
-                ArrayList<Integer> items = new ArrayList<Integer>(numProdTypes);
+                ArrayList<Integer> items = new ArrayList<Integer>();
+                for (int j = 0; j<numProdTypes; j++)    {
+                    items.add(j,0);
+                }
                 for(int i=0; i<numOrderItems; i++){
                     int itemId = Integer.parseInt(itemsString[i]);
-                    items.add(itemId, items.get(itemId)+1);
+                    System.out.println(itemId + " " + itemId);
+                    items.add(itemId, 1);
                 }
 
                 Order order = new Order(row, column, items);
+                orders.add(order);
             }
 
+
             //Init Drones
+            drones = new ArrayList<Drone>();
             for (int idDrone = 0; idDrone<dronesNum; idDrone++) {
                 drones.add(new Drone());
             }
@@ -113,7 +124,28 @@ public class Parser {
 
 	}
 
-    public static ArrayList<Warehouse> getWareHouses()  {
+    public static void displayWarehouses() {
+        System.out.println("Number of warehouses : "+warehouses.size());
+        for(int i=0; i<warehouses.size(); i++)  {
+            System.out.println(warehouses.get(i).toString());
+        }
+    }
+
+    public static void displayOrders() {
+        System.out.println("Number of orders : "+orders.size());
+        for(int i=0; i<orders.size(); i++)  {
+            System.out.println(orders.get(i).toString());
+        }
+    }
+
+    public static void displayDrones() {
+        System.out.println("Number of drones : "+drones.size());
+        for(int i=0; i<drones.size(); i++)  {
+            System.out.println(drones.get(i).toString());
+        }
+    }
+
+    public static ArrayList<Warehouse> getWarehouses()  {
         return warehouses;
     }
 
