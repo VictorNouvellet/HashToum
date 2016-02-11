@@ -18,6 +18,7 @@ public class Drone {
         if(wh.checkAvailable(id, quantity)) {
             wh.removeItems(id, quantity);
             inventory.add(id, quantity);
+
             return true;
         }
         else    {
@@ -29,5 +30,18 @@ public class Drone {
         wh.addItems(id, quantity);
         inventory.add(id, inventory.get(id)-quantity);
         return inventory.get(id);
+    }
+
+    public Integer getItem(int itemId)  {
+        return inventory.get(itemId);
+    }
+
+    public Integer getWeight(ArrayList<Integer> typeWeights)  {
+        int weight = 0;
+        for(int i=0; i< typeWeights.size(); i++)    {
+            weight += typeWeights.get(i)*inventory.get(i);
+        }
+
+        return weight;
     }
 }
