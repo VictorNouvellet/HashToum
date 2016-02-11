@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class Main {
@@ -29,7 +30,7 @@ public class Main {
         	
         	while (itO.hasNext()) {
         		Order currentOrder = itO.next();
-        		Livraison livraison = new Livraison();
+        		Livraison livraison = new Livraison(currentOrder);
         		ArrayList<Integer> distancesLivraison = livraison.getSortedDistances();
         		ArrayList<Warehouse> warehousesLivraison = livraison.getSortedWarehouses();
         		
@@ -40,8 +41,8 @@ public class Main {
         			Iterator<Integer> itD = distancesLivraison.iterator();
         			
         			if (!itD.hasNext()) {
-    					distancesLivraison.add(0, distance);
-    					warehousesLivraison.add(0, currentWarehouse);
+    					distancesLivraison.add(distance);
+    					warehousesLivraison.add(currentWarehouse);
     					itD.next();
         			}
         			
@@ -51,13 +52,49 @@ public class Main {
         					int id = distancesLivraison.indexOf(currentDistance);
         					distancesLivraison.add(id, distance);
         					warehousesLivraison.add(id, currentWarehouse);
-        				} else {
-        					
+        				} else if(!itD.hasNext()) {
+        					distancesLivraison.add(distance);
+        					warehousesLivraison.add(currentWarehouse);
         				}
-        			}
+        			}	
         		}
+        		livraison.setSortedDistances(distancesLivraison);
+        		livraison.setSortedWarehouses(warehousesLivraison);
+        		
+        		//---------------
+        		
+        		ArrayList<Integer> itemsOrder = currentOrder.getItems();
+        		Iterator<Integer> itItemsOrder = itemsOrder.iterator();
+        		
+        		ArrayList<Warehouse> sortedWarehouses2 = livraison.getSortedWarehouses();
+	    		Iterator<Warehouse> itW2 = sortedWarehouses2.iterator();
+	    		
+	    		HashMap<Integer, HashMap<Integer, Integer>> tempWarehousesList = new HashMap<Integer, HashMap<Integer, Integer>>();
+	    		Integer idWarehouse = 0;
+	    		while (itW2.hasNext()) {
+	    			Warehouse currentWarehouse = itW2.next();
+	    			HashMap<Integer, Integer> tempWarehouse = new HashMap<Integer, Integer>();
+	    			
+	        		Integer idItem = 0;
+	        		while(itItemsOrder.hasNext()) {
+	        			
+	        			Integer currentQtItemOrder = itItemsOrder.next();
+	    			
+	        			if (currentWarehouse.checkAvailable(idItem, currentQtItemOrder)) {
+	        				tempWarehouse.put(idItem, currentQtItemOrder);
+	        				currentWarehouse.removeItems(idItem, currentQtItemOrder);
+	        				//currentOrder.removeItems(idItem, currentQtItemOrder);
+	        				itemsOrder.set(idItem, itemsOrder.get(idItem)-currentQtItemOrder);
+	        			}
+	        			idItem++;
+	        		}
+	        		
+	        		tempWarehousesList.put(idWarehouse, tempWarehouse);
+	        		idWarehouse++;
+	        	}
+	    		livraison.setItemsToPick(tempWarehousesList);
+	    		livraisons.add(livraison);
         	}
-        	
         	return livraisons;
         }
         

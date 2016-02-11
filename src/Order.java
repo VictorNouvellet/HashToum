@@ -22,6 +22,21 @@ public class Order {
 		return row;
 	}
 
+	public ArrayList<Integer> getItems() {
+		return items;
+	}
+
+	public void setItems(ArrayList<Integer> items) {
+		this.items = items;
+	}
+	
+	public int removeItems(int id, int numberOfProducts)   {
+        items.add(id, items.get(id)-numberOfProducts);
+
+        return this.items.get(id);
+    }
+    
+
     @Override
     public String toString() {
         return "Order{" +
