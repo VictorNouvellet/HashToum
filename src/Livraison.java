@@ -1,7 +1,15 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Livraison {
 	private Order order;
-	private HashMap trajet;
+	//key : 
+	private ArrayList<Warehouse> sortedWarehouses;
+	private ArrayList<Integer> sortedDistances;
 	
+	public ArrayList<Warehouse> getSortedWarehouses() {
+		return sortedWarehouses;
+	}
+	public ArrayList<Integer> getSortedDistances() {
+		return sortedDistances;
+	}
 }

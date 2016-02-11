@@ -6,11 +6,20 @@ import java.util.ArrayList;
 public class Order {
     int column;
     int row;
-    ArrayList<Integer> items;
+	ArrayList<Integer> items;
 
     public Order(int row, int column, ArrayList<Integer> items)  {
         this.row = row;
         this.column = column;
         this.items = items;
     }
+    
+    public int getColumn() {
+		return column;
+	}
+
+	public int getRow() {
+		return row;
+	}
+    
 }

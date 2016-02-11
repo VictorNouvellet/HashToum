@@ -21,7 +21,15 @@ public class Warehouse {
         this.row = row;
     }
 
-    public int addItems(int id, int numberOfProducts)   {
+    public int getColumn() {
+		return column;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public int addItems(int id, int numberOfProducts)   {
         this.items.add(id, numberOfProducts);
 
         return this.items.get(id);
