@@ -5,8 +5,12 @@ import java.util.Iterator;
 public class Main {
 
         public static void main(String[] args) {
-            // Lecture du fichier
-        	//Parser.parseInput(path to the file);
+
+			// Lecture du fichier
+            Parser.parseInput("./in/busy_day.in");
+            //Parser.displayDrones();
+            //Parser.displayOrders();
+            //Parser.displayWarehouses();
         	
         	//Construction des livraisons
         	getLivraisons();
@@ -19,7 +23,7 @@ public class Main {
         	ArrayList<Livraison> livraisons = new ArrayList<Livraison>();
         	
         	ArrayList<Order> orders = Parser.getOrders();
-        	ArrayList<Warehouse> warehouses = Parser.getWareHouses();
+        	ArrayList<Warehouse> warehouses = Parser.getWarehouses();
         	
         	Iterator<Order> itO = orders.iterator();
         	Iterator<Warehouse> itW = warehouses.iterator();

@@ -13,7 +13,7 @@ public class Order {
         this.column = column;
         this.items = items;
     }
-    
+
     public int getColumn() {
 		return column;
 	}
@@ -36,4 +36,13 @@ public class Order {
         return this.items.get(id);
     }
     
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "column=" + column +
+                ", row=" + row +
+                ", items=" + items +
+                '}';
+    }
 }
