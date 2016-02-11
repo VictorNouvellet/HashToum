@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class Livraison {
-	private Order order;
+	public Order order;
 	//key : 
 	private ArrayList<Warehouse> sortedWarehouses;
 	private ArrayList<Integer> sortedDistances;

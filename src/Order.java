@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Order {
     int column;
     int row;
-	ArrayList<Integer> items;
+	public ArrayList<Integer> items;
 
     public Order(int row, int column, ArrayList<Integer> items)  {
         this.row = row;

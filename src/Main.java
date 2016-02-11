@@ -64,16 +64,31 @@ public class Main {
         	return (int) Math.ceil(Math.sqrt((valAbsRow*valAbsRow)+(valAbsCol*valAbsCol)));
         }
         
-        private static ArrayList<String> dispatch(ArrayList<Livraison> livraisons, ArrayList<Drone> drones, int maxTime) {
+        private static ArrayList<String> dispatch(ArrayList<Livraison> livraisons, ArrayList<Drone> drones, ArrayList<int> poids, int maxTime, int chargementMax) {
         	ArrayList<String> res = new ArrayList<String>();
         	int time = 0;
         	while (time < maxTime) {
         		for(int i = 0; i < drones.size(); i++) {
         			if(drones.get(i).isEmpty()) {
-        				
+        				if(livraisons.size()>0) {
+	        				int idProduit = 0;
+	        				while(idProduit < livraisons.get(0).order.items.size() && livraisons.get(0).order.items.get(idProduit) == 0) {
+	        					idProduit++;
+	        				}
+	        				if(idProduit < livraisons.get(0).order.items.size()){
+	        					int nbProduits = livraisons.get(0).order.items.get(idProduit);
+	        					while(nbProduits*poids.get(idProduits) > chargementMax){
+	        						nbProduits--;
+	        					}
+	        					livraisons.get(0).order.items.set(idProduits, livraisons.get(0).order.items.get(idProduit) - nbProduits);
+	        					drones.get(i).loadItem(idProduit, nbProduits, Warehouse wh)
+	        				}
+	        				
+	        				
+        				}
         			}
         		}
-        		updateDrones();
+        		//updateDrones();
         		time++;
         	}
         	return res;
