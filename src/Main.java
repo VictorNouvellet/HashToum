@@ -67,4 +67,20 @@ public class Main {
         	
         	return (int) Math.ceil(Math.sqrt((valAbsRow*valAbsRow)+(valAbsCol*valAbsCol)));
         }
+        
+        private static ArrayList<String> dispatch(ArrayList<Livraison> livraisons, ArrayList<Drone> drones, int maxTime) {
+        	ArrayList<String> res = new ArrayList<String>();
+        	int time = 0;
+        	while (time < maxTime) {
+        		for(int i = 0; i < drones.size(); i++) {
+        			if(drones.get(i).isEmpty()) {
+        				
+        			}
+        		}
+        		updateDrones();
+        		time++;
+        	}
+        	return res;
+        }
+        
 }
