@@ -2,8 +2,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 public class Parser {
     public static ArrayList<Integer> weights;
@@ -12,8 +10,8 @@ public class Parser {
     private static ArrayList<Order> orders;
     private static ArrayList<Drone> drones;
 
-    public static int maxPayload;
-    public static int turns;
+    private static int maxPayload;
+    private static int turns;
 
 	public static void parseInput(String filename) {
 
@@ -107,7 +105,7 @@ public class Parser {
             //Init Drones
             drones = new ArrayList<Drone>();
             for (int idDrone = 0; idDrone<dronesNum; idDrone++) {
-                drones.add(new Drone());
+                drones.add(new Drone(warehouses.get(0).getRow(), warehouses.get(0).getColumn()));
             }
 
 			while ((sCurrentLine = br.readLine()) != null) {
@@ -158,4 +156,13 @@ public class Parser {
     public static ArrayList<Drone> getDrones()  {
         return drones;
     }
+    
+	public static int getMaxPayload() {
+		return maxPayload;
+	}
+
+	public static int getTurns() {
+		return turns;
+	}
+
 }

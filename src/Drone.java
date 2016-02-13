@@ -5,12 +5,14 @@ import java.util.ArrayList;
  */
 public class Drone {
     ArrayList<Integer> inventory;
-    int column;
-    int row;
+    private int turnsBusy;
+    private int column;
+    private int row;
 
-    public Drone()  {
-        column = 0;
-        row = 0;
+    public Drone(int row, int column)  {
+        this.column = column;
+        this.row = row;
+        turnsBusy = 0;
         inventory = new ArrayList<Integer>();
     }
 
@@ -68,4 +70,37 @@ public class Drone {
     	}
     	return true;
     }
+
+	public int getTurnsBusy() {
+		return turnsBusy;
+	}
+	
+	public void setTurnsBusy(int turnsBusy) {
+		this.turnsBusy = turnsBusy;
+	}
+
+	public boolean decrementTurnsBusy() {
+		if(this.turnsBusy > 0) {
+			this.turnsBusy--;
+			return true;
+		}
+		return false;
+	}
+
+	public int getColumn() {
+		return column;
+	}
+
+	public void setColumn(int column) {
+		this.column = column;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+    
 }

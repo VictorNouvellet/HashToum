@@ -4,9 +4,9 @@ import java.util.ArrayList;
  * Created by victor on 11/02/2016.
  */
 public class Order {
-    int column;
-    int row;
-	public ArrayList<Integer> items;
+    private int column;
+    private int row;
+	private ArrayList<Integer> items;
 
     public Order(int row, int column, ArrayList<Integer> items)  {
         this.row = row;
@@ -63,12 +63,20 @@ public class Order {
     		return true;
     	}
     	
-    	for (int i=0; i<items.size(); i++){
-    		if (items.get(i)!=0)
+    	for (int i = 0; i < items.size(); i++){
+    		if (items.get(i) > 0)
     		{
     			return false;
     		}
     	}
     	return true;
+	}
+	
+	public int getTotalWeight(ArrayList<Integer> weights){
+		int totalWeight = 0;
+		for (int i = 0; i < items.size(); i++){
+			totalWeight += items.get(i)*weights.get(i);
+    	}
+		return totalWeight;
 	}
 }
