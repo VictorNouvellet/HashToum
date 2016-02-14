@@ -8,7 +8,9 @@ import java.util.Map.Entry;
 
 public class Main {
 		// Key : mesure de la qualité. Value : liste des id des orders associées
-		private static TreeMap<Integer, ArrayList<Integer>> ordersInOrder;
+		private static TreeMap<Integer, ArrayList<Integer>> ordersSorted;
+		// Liste des orders dont on est en train de faire la livraison
+		private static ArrayList<Integer> ordersForDelivery;
 
         public static void main(String[] args) {
 
@@ -21,9 +23,12 @@ public class Main {
         public static void perFile(String filenameIn, String filenameOut) {
             // Lecture du fichier
             Parser.parseInput(filenameIn);
-
-            // Ordonne les orders 
-        	orderOrders();
+        	
+        	//
+        	sortWarehouses();
+        	
+            // Trie les orders 
+        	sortOrders();
             
             //Construction des livraisons
             ArrayList<String> commands = dispatch();
@@ -45,35 +50,50 @@ public class Main {
         	return (int) Math.ceil(Math.sqrt((rowsDiff*rowsDiff)+(columnsDiff*columnsDiff)));
         }
         
-        private static void orderOrders() {
-        	ordersInOrder = new TreeMap<Integer, ArrayList<Integer>>();
+        // TODO : Ne pas seulement regarder la proximité avec les wh mais aussi si ils contiennent de quoi compléter l'order
+        private static void sortOrders() {
+        	ordersSorted = new TreeMap<Integer, ArrayList<Integer>>();
         	ArrayList<Order> orders = Parser.getOrders();
             ArrayList<Warehouse> warehouses = Parser.getWarehouses();
             ArrayList<Integer> weights = Parser.weights;
             int maxPayload = Parser.getMaxPayload();
-            int minCost;
             int cost;
-            int roundTripNb;
+            int nbRoundTrip;
         	for(int o = 0; o < orders.size(); o++) {
-        		minCost = Integer.MAX_VALUE;
-        		for(int wh = 0; wh < warehouses.size(); wh++) {
-        			roundTripNb = (int) Math.ceil(orders.get(o).getTotalWeight(weights) / maxPayload);
-        			// Mouais
-        			cost = roundTripNb*(2*distance(warehouses.get(wh).getRow(), warehouses.get(wh).getColumn(), orders.get(o).getRow(), orders.get(o).getColumn()));
-        			if(cost < minCost) {
-        				minCost = cost;
-        			}
-        		}
-        		if(ordersInOrder.containsKey(minCost)) {
-        			ordersInOrder.get(minCost).add(o);
+        		nbRoundTrip = (int) Math.ceil(orders.get(o).getTotalWeight(weights) / maxPayload);
+        		cost = nbRoundTrip*2*orders.get(o).getWarehousesByProximity().firstKey();
+        		if(ordersSorted.containsKey(cost)) {
+        			ordersSorted.get(cost).add(o);
         		}
         		else {
         			ArrayList<Integer> a = new ArrayList<Integer>();
         			a.add(o);
-        			ordersInOrder.put(minCost, a);
+        			ordersSorted.put(cost, a);
         		}
+        	}     
+        }
+        
+        // Sort for each order the warehouses by proximity
+        private static void sortWarehouses() {
+            ArrayList<Order> orders = Parser.getOrders();
+            ArrayList<Warehouse> warehouses = Parser.getWarehouses();
+            TreeMap<Integer, ArrayList<Integer>> warehousesByProximity;
+            int distance;
+        	for (int o = 0; o < orders.size(); o++) {
+        		warehousesByProximity = new TreeMap<Integer, ArrayList<Integer>>();
+        		for (int wh = 0; wh < warehouses.size(); wh++) {
+        			distance = distance(orders.get(o).getRow(), orders.get(o).getColumn(), warehouses.get(wh).getRow(), warehouses.get(wh).getColumn());
+        			if(warehousesByProximity.containsKey(distance)) {
+        				warehousesByProximity.get(distance).add(wh);
+            		}
+            		else {
+            			ArrayList<Integer> a = new ArrayList<Integer>();
+            			a.add(wh);
+            			warehousesByProximity.put(distance, a);
+            		}
+        		}
+        		orders.get(o).setWarehousesByProximity(warehousesByProximity);
         	}
-                    
         }
         
         //Dispatch Drones work
@@ -86,6 +106,7 @@ public class Main {
             ArrayList<Integer> weights = Parser.weights;
 
             ArrayList<String> commands = new ArrayList<String>();
+            ordersForDelivery = new ArrayList<Integer>();
             
         	int turn = 0;
         	// Pour chaque tour
@@ -95,16 +116,20 @@ public class Main {
         		for(int d = 0; d < drones.size(); d++) {
         			// Si il est disponible
         			if(drones.get(d).getTurnsBusy() == 0) {
-        				if(!ordersInOrder.isEmpty()) {
-        					Entry<Integer, ArrayList<Integer>> firstEntry = ordersInOrder.firstEntry();
-        					// On prend le premier id des meilleurs orders
-            				int o = firstEntry.getValue().get(0);
-	        				ArrayList<Integer> necessaryProducts = orders.get(o).getItems();
-	        				ArrayList<Integer> embeddedProducts = new ArrayList<Integer>();
-	        		        for (int i = 0; i < necessaryProducts.size(); i++) {
-	        		        	embeddedProducts.add(0);
-	        		        }
-	        		        //// Choix du warehouse
+        				if(!ordersForDelivery.isEmpty() || !ordersSorted.isEmpty()) {
+        					//// Remplissage de la liste d'orders dont on réalise la livraison
+        					while (ordersForDelivery.size() < 10 && !ordersSorted.isEmpty()) {
+	        					Entry<Integer, ArrayList<Integer>> firstEntry = ordersSorted.firstEntry();
+	        					// On prend les id des premiers meilleurs orders
+	            				int indexOrder = firstEntry.getValue().get(0);
+	            				ordersForDelivery.add(indexOrder);
+								firstEntry.getValue().remove(0);
+								if(firstEntry.getValue().size() == 0) {
+									ordersSorted.remove(firstEntry.getKey());
+								}
+        					}
+							
+	        		        //// Choix du warehouse pour chaque order en livraison
 	        		        /*
 	        		         * ArrayList<ArrayList<Integer>> embeddedProductsPerWh
 	        		         * présélectionner ceux dont le trajet + 2 ne prendra pas trop longtemps
@@ -114,79 +139,101 @@ public class Main {
 	        		         * calcul d'un score pour chaque wh
 	        		         * on garde le meilleur
 	        		         */
-	        		        // Version pas terrible :
-	        		        int wh = 0;
-	        		        boolean whFound = false;
-	        		        Warehouse currentWarehouse = warehouses.get(0);
-	        		        while(!whFound) {
-	        		        	currentWarehouse = warehouses.get(wh);
-		        		        for (int n = 0; n < necessaryProducts.size(); n++) {
-		        		        	if(necessaryProducts.get(n) > 0 && warehouses.get(wh).items.get(n) > 0) {
-		        		        	//if(necessaryProducts.get(n) <= currentWarehouse.items.get(n)) {
-		        		        		whFound = true;
-		        		        	}
+        					int indexChosenOrder = 0;
+        					int indexChosenWarehouse = 0;
+        					int minDistanceToWh = Integer.MAX_VALUE;
+        					ArrayList<Integer> necessaryProducts;
+        					Warehouse warehouse;
+        					for (int o = 0; o < ordersForDelivery.size(); o++) {
+        						necessaryProducts = orders.get(ordersForDelivery.get(o)).getItems();
+		        		        TreeMap<Integer, ArrayList<Integer>> warehousesByProximity = orders.get(ordersForDelivery.get(o)).getWarehousesByProximity();
+		        		        int key = warehousesByProximity.firstKey();
+		        		        int indexInnerArray = 0;
+		        		        boolean whFound = false;
+		        		        int wh;
+		        		        // TODO : améliorer le critère pour valider le wh
+		        		        while(!whFound) {
+		        		        	wh = warehousesByProximity.get(key).get(indexInnerArray);
+		        		        	warehouse = warehouses.get(wh);
+			        		        for (int n = 0; n < necessaryProducts.size() && !whFound; n++) {
+			        		        	if(necessaryProducts.get(n) > 0 && warehouse.items.get(n) > 0) {
+			        		        		whFound = true;
+			        		        		// TODO : améliorer le calcul du cout, distance + ???
+			        		        		int distanceToWh = distance(drones.get(d).getRow(), drones.get(d).getColumn(), warehouse.getRow(), warehouse.getColumn());
+			        		        		if(distanceToWh < minDistanceToWh) {
+			        		        			minDistanceToWh = distanceToWh;
+			        		        			indexChosenOrder = ordersForDelivery.get(o);
+			        		        			indexChosenWarehouse = wh;
+			        		        		}
+			        		        	}
+			        		        }
+			        		        // Parcours des warehousesByProximity
+			        		        if(!whFound) {
+			        		        	if(++indexInnerArray == warehousesByProximity.get(key).size()) {
+			        		        		indexInnerArray = 0;
+			        		        		key = warehousesByProximity.higherKey(key);
+			        		        	}
+			        		        }
 		        		        }
-		        		        if(!whFound) wh++;
+        					}
+        					
+        					warehouse = warehouses.get(indexChosenWarehouse);
+	        				necessaryProducts = orders.get(indexChosenOrder).getItems();
+	        				ArrayList<Integer> embeddedProducts = new ArrayList<Integer>();
+	        		        for (int i = 0; i < necessaryProducts.size(); i++) {
+	        		        	embeddedProducts.add(0);
 	        		        }
 	        		        
 	        		        //// Choix des produits a prendre dans le wh choisi
 	        		        int actualWeight = 0;
 	        		        int nbProductType = 0;
-	        		        //boolean cannotAddMore = false;
-	        				//while(!cannotAddMore) {
-	        				//cannotAddMore = true;
-	        					for	(int n = 0; n < necessaryProducts.size(); n++) {
-	        						int howMany = necessaryProducts.get(n);
-	        						while(howMany*weights.get(n)+actualWeight > maxPayload || howMany > currentWarehouse.items.get(n)) {
-	        							howMany--;
-	        						}
-	        						if(howMany > 0) {
-	        							embeddedProducts.set(n, howMany);
-	        							nbProductType++;
-	        							actualWeight += howMany*weights.get(n);
-	        						}
-	        					}
-	        				//}
+	        		        // TODO : Prendre les gros d'abords ?? Pas sur que ca soit mieux
+        					for	(int n = 0; n < necessaryProducts.size(); n++) {
+        						int howMany = necessaryProducts.get(n);
+        						while(howMany*weights.get(n)+actualWeight > maxPayload || howMany > warehouse.items.get(n)) {
+        							howMany--;
+        						}
+        						if(howMany > 0) {
+        							embeddedProducts.set(n, howMany);
+        							nbProductType++;
+        							actualWeight += howMany*weights.get(n);
+        						}
+        					}
 	        				
 	        				//// Chargement déchargement
 	        				// Calcul du temps nécessaire pour réaliser l'opération
 	        				int nbTurn = 0;
-	        				nbTurn += distance(drones.get(d).getRow(), drones.get(d).getColumn(), currentWarehouse.getRow(), currentWarehouse.getColumn());
-	        				nbTurn += distance(currentWarehouse.getRow(), currentWarehouse.getColumn(), orders.get(o).getRow(), orders.get(o).getColumn());
-	        				nbTurn += 2*nbProductType; //plusieur (dé)chargements éventuels
+	        				nbTurn += distance(drones.get(d).getRow(), drones.get(d).getColumn(), warehouse.getRow(), warehouse.getColumn());
+	        				nbTurn += distance(warehouse.getRow(), warehouse.getColumn(), orders.get(indexChosenOrder).getRow(), orders.get(indexChosenOrder).getColumn());
+	        				nbTurn += 2*nbProductType; // Plusieurs (dé)chargements éventuels
 	        				// Verification que le drone aura le temps de finir sa tache
 	        				if(turn + nbTurn < maxTurns) {
-	        				  // enregistre les opérations du drone
+	        				  // Enregistrement des opérations du drone
 	        					for(int e = 0; e < embeddedProducts.size(); e++) {
 	        						if(embeddedProducts.get(e) > 0) {
-			        				    currentWarehouse.items.set(e, currentWarehouse.items.get(e) - embeddedProducts.get(e));
+	        							warehouse.items.set(e, warehouse.items.get(e) - embeddedProducts.get(e));
 			        				    necessaryProducts.set(e, necessaryProducts.get(e) - embeddedProducts.get(e));
-			        				    commands.add(d + " L " + wh + " " + e + " " + embeddedProducts.get(e));
+			        				    commands.add(d + " L " + indexChosenWarehouse + " " + e + " " + embeddedProducts.get(e));
+			        				    //System.out.println(d + " L " + indexChosenWarehouse + " " + e + " " + embeddedProducts.get(e));
 	        						}
 	        					}
 	        					for(int e = 0; e < embeddedProducts.size(); e++) {
 	        						if(embeddedProducts.get(e) > 0) {
-	        							commands.add(d + " D " + o + " " + e + " " + embeddedProducts.get(e));
+	        							commands.add(d + " D " + indexChosenOrder + " " + e + " " + embeddedProducts.get(e));
 	        						}
 	        					}
-	        				    
 	        				    // déplacement du drone a la zeub
-	        				    drones.get(d).setRow(orders.get(o).getRow());
-	        				    drones.get(d).setColumn(orders.get(o).getColumn());
-	        					
+	        				    drones.get(d).setRow(orders.get(indexChosenOrder).getRow());
+	        				    drones.get(d).setColumn(orders.get(indexChosenOrder).getColumn());
 	        				    // check si on a pas fini l'order
-	        				    if(orders.get(o).isEmpty()) {
-	        				      firstEntry.getValue().remove(0);
-	        				      if(firstEntry.getValue().size() == 0) {
-	        				        ordersInOrder.remove(firstEntry.getKey());
-	        				      }
+	        				    if(orders.get(indexChosenOrder).isEmpty()) {
+	        				      ordersForDelivery.remove((Integer)indexChosenOrder);
 	        				    }
 	        				    //drone occupé mnt
 	        				    drones.get(d).setTurnsBusy(nbTurn);
 	        				    allStoped = false;
 	        				//drones.get(d).loadItem(idProduit, nbProduits, Warehouse wh)
 	        				}
-
         				}
         				else {
         					//System.out.println("pas trouvé d'order");
