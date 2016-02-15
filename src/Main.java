@@ -118,7 +118,7 @@ public class Main {
         			if(drones.get(d).getTurnsBusy() == 0) {
         				if(!ordersForDelivery.isEmpty() || !ordersSorted.isEmpty()) {
         					//// Remplissage de la liste d'orders dont on réalise la livraison
-        					while (ordersForDelivery.size() < 10 && !ordersSorted.isEmpty()) {
+        					while (ordersForDelivery.size() < 20 && !ordersSorted.isEmpty()) {
 	        					Entry<Integer, ArrayList<Integer>> firstEntry = ordersSorted.firstEntry();
 	        					// On prend les id des premiers meilleurs orders
 	            				int indexOrder = firstEntry.getValue().get(0);
@@ -151,14 +151,18 @@ public class Main {
 		        		        int indexInnerArray = 0;
 		        		        boolean whFound = false;
 		        		        int wh;
+		        		        
 		        		        // TODO : améliorer le critère pour valider le wh
+		        		        
 		        		        while(!whFound) {
 		        		        	wh = warehousesByProximity.get(key).get(indexInnerArray);
 		        		        	warehouse = warehouses.get(wh);
 			        		        for (int n = 0; n < necessaryProducts.size() && !whFound; n++) {
 			        		        	if(necessaryProducts.get(n) > 0 && warehouse.items.get(n) > 0) {
 			        		        		whFound = true;
+			        		        		
 			        		        		// TODO : améliorer le calcul du cout, distance + ???
+			        		        		
 			        		        		int distanceToWh = distance(drones.get(d).getRow(), drones.get(d).getColumn(), warehouse.getRow(), warehouse.getColumn());
 			        		        		if(distanceToWh < minDistanceToWh) {
 			        		        			minDistanceToWh = distanceToWh;
