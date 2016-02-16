@@ -15,3 +15,6 @@ hs_err_pid*
 #IntelliJ
 .idea/
 HashToumProject.iml
+
+# Documentation
+*.pdf
