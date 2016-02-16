@@ -1,5 +1,3 @@
 # HashToum
-# Hashperge
 
-A tes souhaits
-Gui
+Another solution for the Google Hash Code 2016
