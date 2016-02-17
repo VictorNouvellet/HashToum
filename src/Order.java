@@ -8,8 +8,8 @@ public class Order {
     private int column;
     private int row;
 	private ArrayList<Integer> items;
-	// Key : distance. Value : liste des warehouses a cette distance
-	private TreeMap<Integer, ArrayList<Integer>> warehousesByProximity;
+	private int score;
+	private int distanceToWh;
 
 	public Order(int row, int column, ArrayList<Integer> items)  {
         this.row = row;
@@ -25,20 +25,28 @@ public class Order {
 		return row;
 	}
 
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public int getDistanceToWh() {
+		return distanceToWh;
+	}
+
+	public void setDistanceToWh(int distanceToWh) {
+		this.distanceToWh = distanceToWh;
+	}
+
 	public ArrayList<Integer> getItems() {
 		return items;
 	}
 
 	public void setItems(ArrayList<Integer> items) {
 		this.items = items;
-	}
-
-    public TreeMap<Integer, ArrayList<Integer>> getWarehousesByProximity() {
-		return warehousesByProximity;
-	}
-
-	public void setWarehousesByProximity(TreeMap<Integer, ArrayList<Integer>> warehousesByProximity) {
-		this.warehousesByProximity = warehousesByProximity;
 	}
 	
 	public int removeItems(int id, int numberOfProducts)   {
